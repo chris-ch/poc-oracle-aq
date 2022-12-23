@@ -59,4 +59,3 @@ END;
 select owner, table_name from dba_all_tables where table_name = 'QT';
 select owner, table_name from dba_all_tables where table_name = 'POCQUEUETABLE';
 ```
-
