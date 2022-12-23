@@ -1,0 +1,34 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-4.3.1
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    io.kubernetes.cri-o.TTY/oracle: "true"
+    io.podman.annotations.autoremove/oracle: "FALSE"
+    io.podman.annotations.init/oracle: "FALSE"
+    io.podman.annotations.privileged/oracle: "FALSE"
+    io.podman.annotations.publish-all/oracle: "FALSE"
+  creationTimestamp: "2022-12-23T03:14:08Z"
+  labels:
+    app: oracle-pod
+  name: oracle-pod
+spec:
+  automountServiceAccountToken: false
+  containers:
+  - image: container-registry.oracle.com/database/enterprise:19.3.0.0
+    name: oracle
+    ports:
+    - containerPort: 1521
+      hostPort: 1521
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+    stdin: true
+    tty: true
+  enableServiceLinks: false
