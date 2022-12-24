@@ -17,11 +17,15 @@ Pulling an Oracle Database image first:
 
 Starting a container:
 
-`> podman run -d -it --name oracle -p 1521:1521 -v config/sqlnet.ora:/opt/oracle/oradata/dbconfig/ORCLCDB/sqlnet.ora container-registry.oracle.com/database/enterprise:19.3.0.0`
+`> podman run -d -it --name oracle -p 1521:1521 -v ./config/sqlnet.ora:/opt/oracle/product/19c/dbhome_1/network/admin/sqlnet.ora container-registry.oracle.com/database/enterprise:19.3.0.0`
 
 Starting a shell within the container:
 
-`> podman exec -it 49c5cab40014 /bin/bash`
+```shell
+podman ps
+# extract container ID
+podman exec -it <container_id> /bin/bash
+```
 
 Database setup (thanks to https://github.com/monodot/oracle-aq-demo):
 
