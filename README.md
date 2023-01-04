@@ -66,7 +66,9 @@ msgid => message_handle);
 COMMIT;
 END;
 /
+```
 
-select owner, table_name from dba_all_tables where table_name = 'QT';
-select owner, table_name from dba_all_tables where table_name = 'POCQUEUETABLE';
+```SQL
+SELECT owner, table_name FROM dba_all_tables WHERE table_name = 'POCQUEUETABLE';
+ALTER USER scott IDENTIFIED BY tiger ACCOUNT UNLOCK;
 ```
