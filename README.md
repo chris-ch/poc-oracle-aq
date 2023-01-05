@@ -2,6 +2,10 @@
 
 ## Installation
 
+**Prerequisites**
+
+Installing Oracle Thick Client libraries under _lib_.
+
 **MacOs specifics**
 ```shell
 podman machine stop || true
@@ -16,59 +20,24 @@ Pulling an Oracle Database image first:
 `> podman pull container-registry.oracle.com/database/enterprise:19.3.0.0`
 
 Starting a container:
+```shell
+podman run -d -it --name oracle -p 1521:1521 --env 'ORACLE_SID=ORCLCDB' container-registry.oracle.com/database/enterprise:19.3.0.0
+podman cp ./config oracle:/home/oracle
+```
 
-`> podman run -d -it --name oracle -p 1521:1521 -v ./config/sqlnet.ora:/opt/oracle/product/19c/dbhome_1/network/admin/sqlnet.ora container-registry.oracle.com/database/enterprise:19.3.0.0`
+Database setup (**needs the container to be fully up after executing previous command, may take a while**):
+```shell
+podman exec -it oracle sqlplus / as sysdba @config/setup-oracle.sql
 
-Starting a shell within the container:
+```
+
+Setting up the Oracle AQ queues:
 
 ```shell
-podman ps
-# extract container ID
-podman exec -it <container_id> /bin/bash
+podman exec -it oracle sqlplus scott/tiger @config/create-queue.sql
 ```
 
-Database setup (thanks to https://github.com/monodot/oracle-aq-demo):
-
-```SQL
-sqlplus / as sysdba
-
-alter session set "_ORACLE_SCRIPT"=true;
-create user scott identified by tiger;
-grant dba to scott;
-```
-
-Setting up the Oracle AQ queues (thanks to https://laurentschneider.com/wordpress/2013/09/advanced-queuing-hello-world.html):
-
-```SQL
-grant execute on dbms_aq to scott;
-grant execute on dbms_aqadm to scott;
-grant execute on dbms_aqin to scott;
-
-EXEC dbms_aqadm.create_queue_table('POCQUEUETABLE', 'SYS.AQ$_JMS_TEXT_MESSAGE')
-EXEC dbms_aqadm.create_queue('POCQUEUE','POCQUEUETABLE')
-EXEC dbms_aqadm.start_queue('POCQUEUE')
-set serverout on
-
-DECLARE
-enqueue_options DBMS_AQ.ENQUEUE_OPTIONS_T;
-message_properties DBMS_AQ.MESSAGE_PROPERTIES_T;
-message_handle RAW (16);
-msg SYS.AQ$_JMS_TEXT_MESSAGE;
-BEGIN
-msg := SYS.AQ$_JMS_TEXT_MESSAGE.construct;
-msg.set_text('Hello, PLSQL World!');
-DBMS_AQ.ENQUEUE (
-queue_name => 'POCQUEUE',
-enqueue_options => enqueue_options,
-message_properties => message_properties,
-payload => msg,
-msgid => message_handle);
-COMMIT;
-END;
-/
-```
-
-```SQL
-SELECT owner, table_name FROM dba_all_tables WHERE table_name = 'POCQUEUETABLE';
-ALTER USER scott IDENTIFIED BY tiger ACCOUNT UNLOCK;
+Stopping and cleaning:
+```shell
+podman rm -f oracle
 ```

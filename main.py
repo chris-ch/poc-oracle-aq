@@ -13,6 +13,16 @@ def main(name):
             for r in cursor.execute(sql):
                 print(r)
 
+        queue = connection.queue('POC_QUEUE')
+        PAYLOAD_DATA = [
+            'The first message',
+            'The second message',
+            'The third message'
+        ]
+        for data in PAYLOAD_DATA:
+            queue.enqone(connection.msgproperties(payload=data))
+        connection.commit()
+
 
 if __name__ == '__main__':
     main('PyCharm')
