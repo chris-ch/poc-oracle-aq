@@ -34,7 +34,7 @@ podman exec -it oracle sqlplus / as sysdba @config/setup-oracle.sql
 Setting up the Oracle AQ queues:
 
 ```shell
-podman exec -it oracle sqlplus scott/tiger @config/create-queue.sql
+podman exec -it oracle sqlplus scott/tiger @config/create-queues.sql
 ```
 
 Stopping and cleaning:
