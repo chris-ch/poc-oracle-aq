@@ -4,7 +4,7 @@
 
 **Prerequisites**
 
-Installing Oracle Thick Client libraries under _lib_.
+Installing Oracle Thick Client 19.8 libraries under _lib_ (download from https://www.oracle.com/database/technologies/instant-client/downloads.html).
 
 **MacOs specifics**
 ```shell
@@ -15,7 +15,7 @@ sed -i '' 's/security_model=mapped-xattr/security_model=none/' $(podman machine 
 podman machine start
 ```
 
-Pulling an Oracle Database image first:
+**Pulling an Oracle Database image**
 
 `> podman pull container-registry.oracle.com/database/enterprise:19.3.0.0`
 
